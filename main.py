@@ -1,12 +1,14 @@
 from flask import Flask, request, redirect, os
-import requests, json, threading, websocket
+import requests, json, threading, websocket, sys
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
 def host_temp(token):
     def on_open(ws): ws.send(json.dumps({"op": 2, "d": {"token": token, "intents": 1, "properties": {"os": "linux"}}}))
-    def rai(*args, **kwargs): raise Exception("sus")
+    def rai(ws): 
+       ws.close()
+       sys.exit()
     def on_message(ws, msg):
         print(msg)
         msg = json.loads(msg)
