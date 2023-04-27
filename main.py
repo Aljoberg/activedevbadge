@@ -17,7 +17,8 @@ def host_temp(token):
     websocket.WebSocketApp("wss://gateway.discord.gg", on_open=on_open, on_message=on_message, on_close=rai).run_forever()
 @app.route('/', methods=["GET", "POST"])
 def hello_world():
-    if request.method == "GET": return redirect("https://adb.js.org")
+    if request.method == "GET": return redirect("https://activedevbadge.vercel.app")
+    if not requests.post("https://www.google.com/recaptcha/api/siteverify", params={"secret": os.getenv("secret"), "response": request.json["captcha"]}).json()["success"]: return "captchano", 400
     headers = {'Authorization': f'Bot {request.json["token"]}'}
     resp = requests.get('https://discord.com/api/users/@me', headers=headers)
     if resp.status_code == 401:
@@ -30,5 +31,6 @@ def hello_world():
         sus = requests.post(url, headers=headers, json=command_data)
         if sus.ok:
             threading.Thread(target=host_temp, args=[request.json["token"]]).start()
+        else: return sus.json()
     return "worked"
 app.run("0.0.0.0", os.getenv("PORT"))
