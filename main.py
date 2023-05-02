@@ -18,6 +18,7 @@ def host_temp(token):
 @app.route('/', methods=["GET", "POST"])
 def hello_world():
     if request.method == "GET": return redirect("https://activedevbadge.vercel.app")
+    if not "captcha" in request.json: return "No captcha", 400
     if not requests.post("https://www.google.com/recaptcha/api/siteverify", params={"secret": os.getenv("secret"), "response": request.json["captcha"]}).json()["success"]: return "captchano", 400
     headers = {'Authorization': f'Bot {request.json["token"]}'}
     resp = requests.get('https://discord.com/api/users/@me', headers=headers)
